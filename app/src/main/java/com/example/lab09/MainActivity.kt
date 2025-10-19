@@ -6,12 +6,13 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.*
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
+import com.example.lab09.network.PostApiService
 import com.example.lab09.ui.theme.Lab09Theme
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -22,7 +23,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             Lab09Theme {
-                ProgPrincipal9()
+                ProgPrincipal9()  // Aquí llamamos a la función principal
             }
         }
     }
@@ -30,57 +31,33 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun ProgPrincipal9() {
-    val urlBase = "https://json-placeholder.mock.beeceptor.com/"
+    val urlBase = "https://jsonplaceholder.typicode.com/"
     val retrofit = Retrofit.Builder()
         .baseUrl(urlBase)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
+    // Se crea la instancia del servicio a partir de la interfaz
+    val servicio = retrofit.create(PostApiService::class.java)
+
     val navController = rememberNavController()
 
+    // Aquí podrías colocar el contenido de tu app
     Scaffold(
-        topBar = { BarraSuperior() },
-        bottomBar = { BarraInferior(navController) },
-        content = { paddingValues ->
-            Contenido(paddingValues, navController, retrofit)
-        }
-    )
-}
-
-// ✅ Usamos CenterAlignedTopAppBar (Material3)
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun BarraSuperior() {
-    CenterAlignedTopAppBar(
-        title = { Text("Mi App Retrofit") }
-    )
-}
-
-@Composable
-fun BarraInferior(navController: androidx.navigation.NavHostController) {
-    BottomAppBar {
+        modifier = Modifier.fillMaxSize(),
+        topBar = { /* BarraSuperior() si ya la tienes creada */ },
+        bottomBar = { /* BarraInferior(navController) si la tienes */ },
+    ) { paddingValues ->
         Text(
-            text = "Barra inferior",
-            modifier = Modifier.padding(16.dp)
+            text = "Servicio Retrofit listo para usar",
+            modifier = Modifier.padding(paddingValues)
         )
     }
 }
 
-@Composable
-fun Contenido(
-    paddingValues: androidx.compose.foundation.layout.PaddingValues,
-    navController: androidx.navigation.NavHostController,
-    retrofit: Retrofit
-) {
-    Text(
-        text = "Contenido principal con Retrofit configurado.",
-        modifier = Modifier.padding(paddingValues)
-    )
-}
-
 @Preview(showBackground = true)
 @Composable
-fun PreviewProgPrincipal9() {
+fun PreviewApp() {
     Lab09Theme {
         ProgPrincipal9()
     }
